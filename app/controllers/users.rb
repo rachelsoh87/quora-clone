@@ -11,10 +11,15 @@ get "/signup" do #takes users from the landing page to the signup page
 end
 
 post "/signup" do #create a user
-    user_exists = User.find_by(user_email: params[:user_email])
+    user_exists = User.find_by(user_email: params[:user][:user_email])
   
   if user_exists.nil?
-    user = User.new(user_full_name: params[:user_full_name], user_password: params[:user_password], user_email: params[:user_email], self_description: params[:self_description]) 
+    user = User.new(
+      user_full_name: params[:user][:user_full_name], 
+      user_password: params[:user][:user_password], 
+      user_email: params[:user][:user_email], 
+      self_description: params[:user][:self_description]
+      ) 
     url.save
     redirect to "/login"
 
