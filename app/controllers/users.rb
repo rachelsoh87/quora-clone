@@ -11,21 +11,24 @@ get "/signup" do #takes users from the landing page to the signup page
 end
 
 post "/signup" do #create a user
-    user_exists = User.find_by(user_email: params[:user][:user_email])
+  
+  user_exists = User.find_by(email: params[:user][:email])
   
   if user_exists.nil?
-    user = User.new(
-      user_full_name: params[:user][:user_full_name], 
-      user_password: params[:user][:user_password], 
-      user_email: params[:user][:user_email], 
-      self_description: params[:user][:self_description]
-      ) 
-    url.save
-    redirect to "/login"
 
-  else 
+    user = User.create(params[:user])
+    @message = "Signed up. You may now login."
+    # (
+    #   user_full_name: params[:user][:user_full_name], 
+    #   user_password: params[:user][:user_password], 
+    #   user_email: params[:user][:user_email], 
+    #   self_description: params[:user][:self_description]
+    # ) 
     redirect to "/login"
+  else
+    @message = "Sign up failed"
   end
+   redirect to "/login"  
 end
 
 get "/login" do #show the login page
@@ -34,6 +37,16 @@ get "/login" do #show the login page
 end
 
 post "/login" do #submit details to compare to the table info
+user = User.authenticate(params[:user][:email], params[:user][:password])
+session[:id] = user.id
+erb :"/static/index"
+end
 
-erb :"login_page"
+post "/logout" do
+  session[:id] = nil
+  @message = "You have successfully logged out!"
+erb :"static/index"  
+end
+
+get '/users/:id' do
 end
